@@ -1,10 +1,16 @@
-package com.electro2560.dev.RewardCodes.objects;
+package com.electro2560.dev.rewardcodes.objects;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * @author Mitchell Sulkowski
+ * @github https://github.com/electro2560
+ * @website https://dev.electro2560.com/
+ * @since Apr 17, 2020
+ */
 public class Reward {
 
 	private String code;
@@ -28,29 +34,15 @@ public class Reward {
 		this.commands = commands;
 		this.items = items;
 		
-		if(this.commands == null){
-			this.commands = new ArrayList<String>();
-		}
-		
-		if(this.items == null){
-			this.items = new ArrayList<ItemStack>();
-		}
-		
-		if(expriresDate != null){
-			this.setExpiresDate(expriresDate);
-		}
-		if(received != null){
-			this.setReceived(received);
-		}
+		if(this.commands == null) this.commands = new ArrayList<String>();
+		if(this.items == null) this.items = new ArrayList<ItemStack>();
+		if(expriresDate != null) this.setExpiresDate(expriresDate);
+		if(received != null) this.setReceived(received);
 		
 	}
 
 	public String getCode() {
 		return code;
-	}
-	
-	public void setCode(String code) {
-		this.code = code;
 	}
 	
 	public ArrayList<String> getCommands() {

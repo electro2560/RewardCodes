@@ -1,0 +1,3 @@
+useMetrics: true
+checkForUpdates: true
+date-format: 'dd/MM/yyyy'

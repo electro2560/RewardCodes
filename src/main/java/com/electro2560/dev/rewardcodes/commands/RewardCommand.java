@@ -1,4 +1,4 @@
-package com.electro2560.dev.RewardCodes.commands;
+package com.electro2560.dev.rewardcodes.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,11 +16,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 
-import com.electro2560.dev.RewardCodes.RewardCodes;
-import com.electro2560.dev.RewardCodes.objects.ElectroDate;
-import com.electro2560.dev.RewardCodes.objects.Reward;
-import com.electro2560.dev.RewardCodes.utils.Perms;
+import com.electro2560.dev.rewardcodes.RewardCodes;
+import com.electro2560.dev.rewardcodes.objects.ElectroDate;
+import com.electro2560.dev.rewardcodes.objects.Reward;
+import com.electro2560.dev.rewardcodes.utils.Perms;
 
+/**
+ * @author Mitchell Sulkowski
+ * @github https://github.com/electro2560
+ * @website https://dev.electro2560.com/
+ * @since Apr 17, 2020
+ */
 public class RewardCommand implements CommandExecutor{
 
 	//Used to access the configuration and such without calling a get instance
@@ -31,7 +37,6 @@ public class RewardCommand implements CommandExecutor{
 		RewardCommand.rewardCodes = rewardCodes;
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!(sender instanceof Player)){
@@ -75,16 +80,14 @@ public class RewardCommand implements CommandExecutor{
 						//Generate random code
 						code = String.format("%09d", new Random().nextInt(1000000000));
 					}
-					String[] dates = args[2].split("/");
-					ElectroDate expiresDate = new ElectroDate(Integer.parseInt(dates[0]), Integer.parseInt(dates[1]), Integer.parseInt(dates[2]));
-					Reward r = new Reward(code, "", null, null, expiresDate, null);
-					rewardCodes.getRewards().put(code, r);
+					Reward reward = new Reward(code, "", null, null, new ElectroDate(args[2]), null);
+					rewardCodes.getRewards().put(code, reward);
 					player.sendMessage(ChatColor.GREEN + "You have created the reward with the code of " + ChatColor.AQUA + code + ChatColor.GREEN + " that will expire on the date " + ChatColor.AQUA + args[2]);
 				}
 			}else{
 				//Missing arguments. Example of proper use: /redeem create [code] [Date to End]
 				player.sendMessage(ChatColor.RED + "Error: Incorrect ussage.\n"
-						+ "Syntax: /redeem create [code] [Date to End - mm/dd/yyyy]\n"
+						+ "Syntax: /redeem create [code] [Date to End - " + RewardCodes.get().rawDateFormat + "\n"
 						+ "Example: /redeem create random 1/23/2045 - Creates a reward with a random numeric code that expires on January 23rd, 2045\n"
 						+ "Example: /redeem create test 1/23/2045 - Creares a reward with the code of test that expires on January 23rd, 2045");
 			}
@@ -111,12 +114,12 @@ public class RewardCommand implements CommandExecutor{
 			if(args.length >= 1){
 				String code = args[1];
 				if(rewardCodes.getRewards().containsKey(code)){
-					Reward r = rewardCodes.getRewards().get(code);
+					Reward reward = rewardCodes.getRewards().get(code);
 						
-					String message = r.getMessage();
-					ArrayList<String> commands = r.getCommands();
-					ArrayList<ItemStack> items = r.getItems();
-					ElectroDate expiresDate = r.getExpiresDate();
+					String message = reward.getMessage();
+					ArrayList<String> commands = reward.getCommands();
+					ArrayList<ItemStack> items = reward.getItems();
+					ElectroDate expiresDate = reward.getExpiresDate();
 						
 					if(message == null || message.equals("")) message = ChatColor.RED + "UNSET MESSAGE";
 						
@@ -136,7 +139,7 @@ public class RewardCommand implements CommandExecutor{
 							ItemStack i = items.get(j);
 							String name = "";
 							if(i.getItemMeta().getDisplayName() != null) name = ChatColor.GREEN + " Display Name: " + i.getItemMeta().getDisplayName();
-							player.sendMessage(ChatColor.WHITE + "" + j + "." + ChatColor.GREEN + " Type: " + ChatColor.AQUA + i.getType().toString() + "(" + i.getTypeId() + ") " + ChatColor.GREEN + "Amount: " + ChatColor.AQUA + i.getAmount() + name);
+							player.sendMessage(ChatColor.WHITE + "" + j + "." + ChatColor.GREEN + " Type: " + ChatColor.AQUA + i.getType().toString() + ChatColor.GREEN + "Amount: " + ChatColor.AQUA + i.getAmount() + name);
 						}
 					}else player.sendMessage(ChatColor.GREEN + "Items: " + ChatColor.RED + "None");
 				}else player.sendMessage(ChatColor.RED + "Error: That reward does not exist!");
@@ -169,8 +172,8 @@ public class RewardCommand implements CommandExecutor{
 							+ "message, clearcommands, clearitems, addcommand, additem, clearreceived, help, addreceived, expiresdate");
 					break;
 				}
-				Reward r = rewardCodes.getRewards().get(code);
-				if(r == null){
+				Reward reward = rewardCodes.getRewards().get(code);
+				if(reward == null){
 					player.sendMessage(ChatColor.RED + "Error: Reward " + code + " does not exist! Do /redeem list to see all current rewards");
 					break;
 				}
@@ -178,23 +181,23 @@ public class RewardCommand implements CommandExecutor{
 				case  "message":
 					String message = "";
 					for(int i = 3; i < args.length; i++) message += args[i] + " ";
-					message = message.trim().replace('&', 'ง');
-					r.setMessage(message);
+					message = message.trim().replace('&', 'ยง');
+					reward.setMessage(message);
 					player.sendMessage(ChatColor.GREEN + "Message for reward " + ChatColor.AQUA + code + ChatColor.GREEN + " has been set to " + ChatColor.AQUA + message);
 					break;
 				case "clearcommands":
-					r.setCommands(null);
+					reward.setCommands(null);
 					player.sendMessage(ChatColor.GREEN + "All commands for reward " + ChatColor.AQUA + code + ChatColor.GREEN + " have been cleared!");
 					break;
 				case "clearitems":
-					r.setItems(null);
+					reward.setItems(null);
 					player.sendMessage(ChatColor.GREEN + "All items for reward " + ChatColor.AQUA + code + ChatColor.GREEN + " have been cleared!");
 					break;
 				case "addcommand":
 					String c = "";
 					for(int i = 3; i < args.length; i++) c += args[i] + " ";
 					c = c.trim();
-					r.getCommands().add(c);
+					reward.getCommands().add(c);
 					player.sendMessage(ChatColor.GREEN + "You added command " + ChatColor.AQUA + c + ChatColor.GREEN + " to reward " + ChatColor.AQUA + code);
 					break;
 				case "additem":
@@ -203,11 +206,11 @@ public class RewardCommand implements CommandExecutor{
 						player.sendMessage(ChatColor.RED + "Error: You cannot add air as an item! Please hold something in your hand.");
 						break;
 					}
-					r.getItems().add(item);
+					reward.getItems().add(item);
 					player.sendMessage(ChatColor.GREEN + "The item in your hand has been added to reward " + ChatColor.AQUA + code);
 					break;
 				case "clearreceived":
-					r.setReceived(null);
+					reward.setReceived(null);
 					player.sendMessage(ChatColor.GREEN + "All players that have received reward " + ChatColor.AQUA + code + ChatColor.GREEN + " have been cleared!");
 					break;
 				case "help":
@@ -220,7 +223,7 @@ public class RewardCommand implements CommandExecutor{
 							ChatColor.GREEN + "clearreceived" + ChatColor.AQUA + " - Clear the list of players who received a reward.\n" +
 							ChatColor.GREEN + "addreceived" + ChatColor.AQUA + " - Add a UUID to the received list.\n" +
 							ChatColor.GREEN + "help" + ChatColor.AQUA + " - Displays this help message.\n" +
-							ChatColor.GREEN + "expiresdate" + ChatColor.AQUA + " - Set the date a reward will expire. All dates must be in the following format: MM/dd/yy Example: 1/23/45 to set it to January 23rd, 2045");
+							ChatColor.GREEN + "expiresdate" + ChatColor.AQUA + " - Set the date a reward will expire. All dates must be in the following format: " + RewardCodes.get().rawDateFormat + " Example: 1/23/45 to set it to January 23rd, 2045");
 					break;
 				case "addreceived":
 					if(args.length >= 3){
@@ -237,7 +240,7 @@ public class RewardCommand implements CommandExecutor{
 							player.sendMessage(ChatColor.RED + "Error: " + ChatColor.DARK_RED + u + ChatColor.RED + " is not a valid UUID!");
 							break;
 						}
-						r.getReceived().add(uuid);
+						reward.getReceived().add(uuid);
 						player.sendMessage(ChatColor.GREEN + "UUID " + ChatColor.AQUA + u + ChatColor.GREEN + " has been added as a receiver to the reward " + ChatColor.AQUA + code);
 					}else player.sendMessage(ChatColor.RED + "Error: You must enter the uuid of a player!");
 					break;
@@ -246,9 +249,8 @@ public class RewardCommand implements CommandExecutor{
 						player.sendMessage(ChatColor.RED + "Error: Missing arguments! Example /redeem edit [code] expiresdate 1/23/2045");
 						break;
 					}
-					String[] dates = args[3].split("/");
-					ElectroDate expiresDate = new ElectroDate(Integer.parseInt(dates[0]), Integer.parseInt(dates[1]), Integer.parseInt(dates[2]));
-					r.setExpiresDate(expiresDate);
+					
+					reward.setExpiresDate(new ElectroDate(args[3]));
 					player.sendMessage(ChatColor.GREEN + "Expires date for reward " + ChatColor.AQUA + code + ChatColor.GREEN + " has been set to " + ChatColor.AQUA + args[3]);
 					break;
 				default:
@@ -275,25 +277,23 @@ public class RewardCommand implements CommandExecutor{
 		default:
 			//Sub command not found, must be a code
 			if(rewardCodes.getRewards().containsKey(args[0])){
-				Reward r = rewardCodes.getRewards().get(args[0]);
+				Reward reward = rewardCodes.getRewards().get(args[0]);
 				
 				if(!player.hasPermission(Perms.isAdmin) && !player.hasPermission(Perms.receiveAll) && !player.hasPermission(new Permission(Perms.receiveBase + args[0]))){
 					player.sendMessage(noPerm);
 					break;
 				}
 				//Check if reward can still be received
-				ElectroDate d = new ElectroDate();
-				ElectroDate e = r.getExpiresDate();
-				if(!e.isAfter(d) && !e.toString().equals(d.toString())){
+				if(System.currentTimeMillis() > reward.getExpiresDate().getExpireDate().getTime()){
 					player.sendMessage(ChatColor.RED + "Error: Reward " + args[0] + " has expired and is no longer available!");
 					break;
 				}
 				
 				//Execute reward
-				if(!r.getReceived().contains(player.getUniqueId())){
+				if(!reward.getReceived().contains(player.getUniqueId())){
 					//Give permissions and items
-					ArrayList<ItemStack> items = r.getItems();
-					ArrayList<String> commands = r.getCommands();
+					ArrayList<ItemStack> items = reward.getItems();
+					ArrayList<String> commands = reward.getCommands();
 					
 					if(items != null){
 						for(ItemStack i : items){
@@ -306,17 +306,17 @@ public class RewardCommand implements CommandExecutor{
 					
 					if(commands != null){
 						for(String s : commands){
-							//Use %p for player name
-							//Use %u for player uuid
-							Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), s.replaceAll("%p", player.getName()).replaceAll("%u", player.getUniqueId().toString()));
+							//Use %player% for player name
+							//Use %uuid% for player uuid
+							Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), s.replace("%player%", player.getName()).replace("%uuid%", player.getUniqueId().toString()));
 						}
 					}
 					
 					//Add player to received list
-					r.getReceived().add(player.getUniqueId());
+					reward.getReceived().add(player.getUniqueId());
 					
-					if(r.getMessage() == null || r.getMessage() == "") break;
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', r.getMessage()).replaceAll("%p", player.getName()).replaceAll("%u", player.getUniqueId().toString()));
+					if(reward.getMessage() == null || reward.getMessage() == "") break;
+					player.sendMessage(ChatColor.translateAlternateColorCodes('&', reward.getMessage()).replace("%player%", player.getName()).replace("%uuid%", player.getUniqueId().toString()));
 					
 				}else player.sendMessage(ChatColor.RED + "Error: You have already received this reward!");
 			}else player.sendMessage(ChatColor.RED + "Error: No reward found by the code of " + args[0]);

@@ -1,4 +1,4 @@
-package com.electro2560.dev.RewardCodes.updater;
+package com.electro2560.dev.rewardcodes.updater;
 
 import org.apache.commons.lang.StringUtils;
 
