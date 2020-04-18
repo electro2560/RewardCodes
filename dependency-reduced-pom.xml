@@ -18,7 +18,7 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
-    <finalName>${project.name}-${project.version}</finalName>
+    <finalName>RewardCodes-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

@@ -24,7 +24,7 @@
 			</resource>
 		</resources>
 
-		<finalName>${project.name}-${project.version}</finalName>
+		<finalName>RewardCodes-${project.version}</finalName>
 
 		<plugins>
 			<plugin>
